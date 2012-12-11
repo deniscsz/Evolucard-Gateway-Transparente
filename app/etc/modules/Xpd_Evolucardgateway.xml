@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Xpd_Evolucardgateway>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Xpd_Evolucardgateway>
+    </modules>
+</config>
+
