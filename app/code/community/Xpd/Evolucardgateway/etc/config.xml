@@ -42,7 +42,7 @@
             <quote>
                 <totals>
                     <encargo>
-                        <class>cielo/total_encargo</class>
+                        <class>evolucardgateway/total_encargo</class>
                         <after>subtotal, tax</after>
                         <before>grand_total</before>
                     </encargo>
