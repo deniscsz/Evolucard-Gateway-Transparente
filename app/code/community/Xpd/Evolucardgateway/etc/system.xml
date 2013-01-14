@@ -55,6 +55,14 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </environment>
+                        <evocode translate="label">
+                            <label>Código de Afiliação Evolucard</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>39</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </evocode>
                         <merchant_id translate="label">
                             <label>Afiliação Cielo</label>
                             <frontend_type>text</frontend_type>

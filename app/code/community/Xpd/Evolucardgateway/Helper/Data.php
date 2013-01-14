@@ -15,7 +15,7 @@
  * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
  * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
  */
-class Octagono_Cielo_Helper_Data extends Mage_Core_Helper_Abstract
+class Xpd_Evolucardgateway_Helper_Data extends Mage_Core_Helper_Abstract
 {
 
     const PARCEL_MAX_VALUE = 12;
@@ -190,6 +190,18 @@ class Octagono_Cielo_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function ceiling($value, $precision = 0) {
         return ceil($value * pow(10, $precision)) / pow(10, $precision);
+    }
+    
+    public function convertOrderId($OrderId) {
+        $orderStr = (string)$OrderId;
+        $tam = strlen($orderStr);
+        
+        for($i=0;$i<8-$tam;$i++) {
+            $orderStr = '0'.$orderStr;
+        }
+        $orderStr = '1'.$orderStr;
+        
+        return $orderStr;
     }
 
 }

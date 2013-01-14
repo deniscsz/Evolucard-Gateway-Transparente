@@ -1,0 +1,193 @@
+<?php
+/**
+ * Octagono Ecommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ *
+ *
+ * @category   Cielo
+ * @package    Octagono_Cielo
+ * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
+ * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ */
+ ?>
+<?php
+    $_code=$this->getMethodCode();
+    //feito para ter compatibilidade com o OneStepCheckout
+    $route = $this->getRequest()->getRequestedRouteName();
+    if($route == 'onestepcheckout') {
+        $fieldCode = '['.$_code.']';
+    }
+    else {
+        $fieldCode = '';
+    }
+    $cls  = new Mage_Core_Model_Design_Package();
+    $path = $cls->getSkinBaseUrl();
+    $contaParcela = 1;
+?>
+
+<script type="text/javascript">
+function onCardChange(selectElement) {
+    var selCard = selectElement.options[selectElement.selectedIndex].value;
+    //alert(selCard);
+
+    if (selCard == 'diners') {
+        $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 14);
+    }
+    else {
+        $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 16);
+    }
+
+    //quando um tipo de cartao e escolhida, limpa a escolha dos outros campos de tipo de cartao
+    var results = $$('select');
+    results.each(function(elem){
+        if (selectElement != elem && elem.id.indexOf('cc_type') > 0) {
+            elem.value = '';
+        }
+    });
+}
+function mascara(o,f){
+    v_obj=o
+    v_fun=f
+    setTimeout("execmascara()",1)
+}
+function execmascara(){
+    v_obj.value=v_fun(v_obj.value)
+}
+function numeros(v){
+    v=v.replace(/\D/g,"")
+    return v
+}
+</script>
+<fieldset class="form-list">
+<ul>
+     <li class="first">
+     	<br />
+		<?php $_ccType = $this->getInfoData('cc_type') ?>
+        <?php $parcela2 = end($this->getParcelas()); ?>
+		<ul class="card-logo">
+		<?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+			<li>
+				<label for="card-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" />
+			</li>
+		<?php endforeach ?>
+		</ul>
+    </li>
+</ul>
+    <ul id="payment_form_<?php echo $_code ?>" style="display:none">
+    <li>
+        <div class="input-box">
+            <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label><br />
+            <select id="<?php echo $_code ?>_cc_type" name="payment<?php echo $fieldCode; ?>[cc_type]" class="required-entry validate-card-type-select" onChange="javascript:onCardChange(this)">
+                <option value=""><?php echo $this->__('--Please Select--') ?></option>
+            <?php $_ccType = $this->getInfoData('cc_type') ?>
+            <?php $ccTypes = $this->getCcAvailableTypes(); ?>
+            <?php foreach ($ccTypes as $_typeCode => $_typeName): ?>
+                <?php
+                    if (count($ccTypes) == 1 || $_typeCode == $_ccType) {
+                        $selected = 'selected="selected"';
+                    }
+                    else {
+                        $selected = '';
+                    }
+                ?>
+                <option value="<?php echo $_typeCode ?>" <?php echo $selected; ?>><?php echo $_typeName ?></option>
+            <?php endforeach ?>
+            </select>
+        </div>
+    </li>
+    <li>
+        <div class="input-box">
+            <label for="<?php echo $_code ?>_cc_owner" class="required"><em>*</em><?php echo $this->__('Name on Card') ?></label><br />
+            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" id="<?php echo $_code ?>_cc_owner" name="payment[cc_owner]" value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" />
+        </div>
+    </li>
+    <li>
+        <label for="<?php echo $_code ?>_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label><br />
+        <div class="input-box">
+            <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" class="input-text required-entry" value="" maxlength="16" />
+        </div>
+    </li>
+    <li id="<?php echo $_code ?>_cc_type_exp_div">
+        <label for="<?php echo $_code ?>_expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label><br />
+        <div class="input-box">
+            <div class="v-fix">
+                <select id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]" class="month required-entry">
+                <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
+                <?php foreach ($this->getCcMonths() as $k=>$v): ?>
+                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                <?php endforeach ?>
+                </select>
+            </div>
+            <div class="v-fix">
+                <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
+                <select id="<?php echo $_code ?>_expiration_yr" name="payment[cc_exp_year]" class="year required-entry">
+                <?php foreach ($this->getCcYears() as $k=>$v): ?>
+                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                <?php endforeach ?>
+                </select>
+            </div>
+        </div>
+    </li>
+    <?php echo $this->getChildHtml() ?>
+    <?php if($this->hasVerification()): ?>
+    <li>
+        <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label><br />
+        <div class="input-box">
+            <div class="v-fix">
+                <input type="text" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" size="5" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" maxlength="3" />
+            </div>
+            <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+        </div>
+    </li>
+    <?php endif; ?>
+    <li>
+        <label for="<?php echo $_code ?>_parcelas"><?php echo $this->__('Parcelas') ?> </label><br />
+        <div class="input-box">
+            <select id="<?php echo $_code ?>_cc_parcelas" name="payment[cc_parcelas]">
+		<?php foreach($this->getParcelas() as $parcela): ?>
+				<option value="<?php echo $parcela['parcela'] ?>"><?php echo $parcela['label'] ?></option>
+		<?php endforeach ?>
+	    </select>
+        </div>
+    </li>
+    <?php $checkout = Mage::getSingleton('checkout/session')->getQuote(); ?>
+    <?php $billing = $checkout->getBillingAddress(); ?>
+    <li class="form-evolucard-celular">
+        <label class="required"><em>*</em>Celular</label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" size="3" id="<?php echo $_code ?>_ddi_cel" name="payment[ddi_cel]" value="55" maxlength="3" />
+            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" size="3" id="<?php echo $_code ?>_ddd_cel" name="payment[ddd_cel]" value="" maxlength="3" />
+            <input type="text" title="<?php echo $this->__('Celular') ?>" placeholder="Celular" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_cel" name="payment[number_cel]" value="<?php //echo $billing->getData("telephone") ? $billing->getData("telephone") : 'Nada'; ?>" maxlength="9" />
+        </div>
+    </li>
+    <li class="form-evolucard-telefone">
+        <label class="required"><em>*</em>Telefone</label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" />
+            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="" maxlength="3" />
+            <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="" maxlength="9" />
+        </div>
+    </li>
+    <li class="form-evolucard-create-account">
+        <div class="input-box">
+            <input type="checkbox" id="<?php echo $_code ?>_create_account" name="payment[create_account]"/>
+            <label style="float: right; width: 235px;" for="<?php echo $_code ?>_create_account"><?php echo $this->__('Aceito pagar com 1-Click Evolucard na próxima compra'); ?></label>
+        </div>
+        
+    </li>
+</ul>
+</fieldset>
+<style type="text/css">
+.card-logo { }
+.card-logo li { float: left; text-align: center; margin-right: 15px !important;height:57px;vertical-align:bottom;display:block; position:relative; }
+.card-logo li .validation-advice {position:absolute;top:55px;width:150px}
+.payment-methods .form-list li .input-box .input-text.cvv { width:50px; margin-right:5px}
+.payment-methods .form-list li .input-box select { width:auto !important;margin-right:5px}
+</style>
+

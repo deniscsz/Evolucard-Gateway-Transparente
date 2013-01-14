@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+    
+    <default>
+        <reference name="head">
+            <action method="addItem" ifconfig="payment/evolucardgateway/active"><type>skin_css</type><name>css/evolucardgateway.css</name></action>
+        </reference>
+    </default>
+    
+    <evolucardgateway_index_index translate="label">
+    </evolucardgateway_index_index>
+    
+    <checkout_onepage_index>
+        <remove name="right"/>
+        <reference name="checkout.onepage.billing">
+            <action method="setTemplate"><template>xpd/evolucardgateway/persistent/checkout/onepage/billing.phtml</template></action>
+        </reference>
+        <reference name="checkout.onepage.shipping">
+            <action method="setTemplate"><template>xpd/evolucardgateway/checkout/onepage/shipping.phtml</template></action>
+        </reference>
+    </checkout_onepage_index>
+    
+</layout>

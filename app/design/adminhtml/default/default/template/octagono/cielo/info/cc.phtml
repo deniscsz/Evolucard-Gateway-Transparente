@@ -1,0 +1,87 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2008 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php 
+	$types = Mage::getSingleton('payment/config')->getCcTypes();
+	if (isset($types[$this->getInfo()->getCcType()])) {
+		$ccType = $types[$this->getInfo()->getCcType()];
+	}
+	else {
+		$ccType = $this->getInfo()->getCcType();
+	}
+	
+	//recupera o TID e a Transacao
+	$tid = $this->getInfo()->getCcTransId(); 
+
+	$orderId = 0;
+	$realOrderId = 0;
+	
+	$order = $this->getOrder();
+
+	if ($order) {
+		$orderId = $order->getId();
+		$realOrderId = $order->getRealOrderId();
+	}
+	else {
+		$orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+		$realOrderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+	}
+	
+	$trans = null;
+
+	if (!empty($realOrderId)) {
+		$trans = $this->getTransaction($realOrderId); 
+		$parcelas = $trans['parcelas'];
+		$tid = $trans['transId'];
+		$mensagem = $trans['transMensagem'];
+		$transResposta = $trans['transResposta'];
+		$numeroCartao = $trans['numeroCartao'];
+		$authId = $trans['authId'];
+		$autorizacaoId = $trans['autorizacaoId'];
+	}
+?>
+
+<?php echo Mage::helper('payment')->__('Name on the Card: %s', $this->htmlEscape($this->getInfo()->getCcOwner())) ?><br/>
+<?php echo Mage::helper('payment')->__('Credit Card Type: %s', $this->htmlEscape($ccType)) ?><br/>
+<?php //if ($this->getIsSecureMode()):?>
+<?php echo Mage::helper('payment')->__('Credit Card Number: xxxx-%s', $this->htmlEscape($this->getInfo()->getCcLast4())) ?><br/>
+<?php //else:?>
+<?php //echo Mage::helper('payment')->__('Credit Card Number: %s', $this->htmlEscape($this->getInfo()->getCcNumber())) ?>
+<?php //endif?>
+<?php echo Mage::helper('payment')->__('Expiration Date: %s/%s', $this->htmlEscape($this->getInfo()->getCcExpMonth()), $this->htmlEscape($this->getInfo()->getCcExpYear())) ?><br />
+<?php //echo Mage::helper('payment')->__('Card Verification Number: %s', $this->htmlEscape($this->getInfo()->getCcCidEnc())) ?>
+<?php echo Mage::helper('payment')->__('Card Verification Number: xxx', $this->htmlEscape($this->getInfo()->getCcCid())) ?><br />
+<?php echo Mage::helper('payment')->__('Número de Parcelas: %s', $this->getInfo()->getCcParcelas()) ?><br />
+
+<?php if ($trans && $trans != null) : ?>
+	<!--<p><?php echo 'N&uacute;mero de Parcelas: ' . $parcelas ?></p>-->
+	<p><?php if (!empty($tid)) echo 'C&oacute;digo da transa&ccedil;&atilde;o: ' . $tid; ?></p>
+	<p><?php if (!empty($mensagem)) echo 'Mensagem da transa&ccedil;&atilde;o: ' . $mensagem; ?></p>
+	<!--<p><?php if (!empty($transResposta)) echo 'C&oacute;digo de resposta da transa&ccedil;&atilde;o: ' . $transResposta; ?></p>-->
+	<p><?php if (!empty($authId)) echo 'N&uacute;mero da autentica&ccedil;&atilde;o: ' . $authId; ?></p>
+	<p><?php if (!empty($autorizacaoId)) 'N&uacute;mero da autentica&ccedil;&atilde;o: ' . $autorizacaoId; ?></p>
+<?php endif; ?>
+

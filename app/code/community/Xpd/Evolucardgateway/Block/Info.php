@@ -15,12 +15,12 @@
  * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
  * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
  */
-class Octagono_Cielo_Block_Info extends Mage_Payment_Block_Info_Ccsave
+class Xpd_Evolucardgateway_Block_Info extends Mage_Payment_Block_Info_Ccsave
 {
     protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('octagono/cielo/info.phtml');
+        $this->setTemplate('xpd/evolucardgateway/info.phtml');
     }
 
 	/**

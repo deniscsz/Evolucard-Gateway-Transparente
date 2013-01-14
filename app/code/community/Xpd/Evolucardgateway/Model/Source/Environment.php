@@ -20,7 +20,10 @@ class Xpd_Evolucardgateway_Model_Source_Environment
     public function toOptionArray()
     {
         return array(
-            //array('value' => 0,'label' => 'Teste'),
+            array(
+                'value' => 0,
+                'label' => 'Teste'
+            ),
             array(
                 'value' => 1,
                 'label' => 'Produção'
