@@ -15,6 +15,7 @@
             <evolucardgateway_setup>
                 <setup>
                     <module>Xpd_Evolucardgateway</module>
+                    <class>Mage_Sales_Model_Mysql4_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>
@@ -137,12 +138,13 @@
             <evolucardgateway>
                 <active>1</active>
                 <model>evolucardgateway/standard</model>
-                <title>Evolucard</title>
+                <title>Cartões de Crédito</title>
                 <mostrar_parcelamento>1</mostrar_parcelamento>
                 <cctypes>visa,mastercard,elo,amex,diners</cctypes>
                 <environment>0</environment>
                 <allowspecific>0</allowspecific>
                 <useccv>1</useccv>
+                <captura>1</captura>
             </evolucardgateway>
         </payment>
     </default>

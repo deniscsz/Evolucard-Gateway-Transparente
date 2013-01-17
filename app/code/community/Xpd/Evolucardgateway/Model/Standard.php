@@ -78,17 +78,71 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         Mage::log("Evolucard - " . $message, $level, 'evolucard.log', $forceLog);
     }
     
+    public function geraInvoice($order,$status,$id) {
+        
+        if ($status == 'APR') {
+            if ($order->canUnhold()) {
+        	    $order->unhold();
+        	}
+            if ($order->canInvoice()) {
+                $changeTo = Mage_Sales_Model_Order::STATE_PROCESSING;
+                
+                Mage::getSingleton("core/session")->setInvoiceMail(1);
+                
+                $invoice = $order->prepareInvoice();
+                $invoice->register()->pay();
+                $invoice_msg = utf8_encode(sprintf('Pagamento confirmado. Transa&ccedil;&atilde;o Evolucard: %s', $transacaoID));
+                $invoice->addComment($invoice_msg, true);
+                $invoice->sendEmail(true, $invoice_msg);
+                $invoice->setEmailSent(true);
+                //$this->log("Email Fatura Enviado");
+            
+                Mage::getModel('core/resource_transaction')
+                   ->addObject($invoice)
+                   ->addObject($invoice->getOrder())
+                   ->save();
+                $comment = utf8_encode(sprintf('Fatura #%s criada.', $invoice->getIncrementId()));
+                $order->setState($changeTo, true, $comment, $notified = true);
+                $order->save();                        
+                //$this->log("[ Fatura criada ]");
+                Mage::getSingleton("core/session")->setInvoiceMail(0);
+                Mage::getSingleton("core/session")->clear();
+            }
+            else {
+                // Lógica para quando a fatura não puder ser criada
+                //$this->log("Fatura nao pode ser criada");
+            }
+        }
+        else {
+            // Pedido cancelado
+            if ($status == 'REP') {
+                if ($order->canUnhold()) {
+    	           $order->unhold();
+                }
+                if ($order->canCancel()) {
+                    $order_msg = "Pagamento Cancelado.";
+            		$changeTo = Mage_Sales_Model_Order::STATE_CANCELED;
+            		$order->getPayment()->setMessage($order_msg);
+            		$order->cancel();
+                    $order->setState(Mage_Sales_Model_Order::STATE_CANCELED, true)->save();
+                    //$this->log("Ordem cancelada ".$order->getRealOrderId());
+                }
+            }
+        }
+    }
+    
     public function buildDataToPost($customer,$order,$payment,$create_account = true) {
         $fields = Array();
         
         $fields['merchantCode'] = Mage::getStoreConfig('payment/evolucardgateway/evocode');
         $fields['docNumber'] = Mage::helper('evolucardgateway')->convertOrderId($order->getId());
         $fields['consumer.name'] = $customer->getName();
-        
-        $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
-        $fields['consumer.mobileAc'] = Mage::getSingleton('core/session')->getDddCel();
-        $fields['consumer.mobileNb'] = Mage::getSingleton('core/session')->getNumberCel();
-        echo $order->getCustomerDob();
+        if($create_account) {
+            $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
+            $fields['consumer.mobileAc'] = Mage::getSingleton('core/session')->getDddCel();
+            $fields['consumer.mobileNb'] = Mage::getSingleton('core/session')->getNumberCel();
+        }
+        //echo $order->getCustomerDob();
         $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($order->getCustomerDob())) + 15000;
         $fields['consumer.birthDate'] = $dataForFilter = date('Y-m-d', $dateTimestamp);
         
@@ -102,7 +156,6 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         }
         
         $fields['consumer.email'] = $customer->getEmail();
-        //$fields['consumer.ip'] = Mage::helper('core/http')->getRemoteAddr(true);
         
         switch($payment->getData('cc_type')) {
             case 'visa': $fields['consumer.cardPaymentBrand'] = 1; break;
@@ -120,9 +173,11 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         $fields['value'] = number_format($order->getGrandTotal(), 2, '.', '');
         $fields['numberPayment'] = $this->formaPagamentoParcelas;
         $fields['installmentResponsible'] = $this->formaPagamentoProduto;
-        $fields['consumer.phoneCc'] = Mage::getSingleton('core/session')->getDdiTel();
-        $fields['consumer.phoneAc'] = Mage::getSingleton('core/session')->getDddTel();
-        $fields['consumer.phoneNb'] = Mage::getSingleton('core/session')->getNumberTel();
+        if($create_account) {
+            $fields['consumer.phoneCc'] = Mage::getSingleton('core/session')->getDdiTel();
+            $fields['consumer.phoneAc'] = Mage::getSingleton('core/session')->getDddTel();
+            $fields['consumer.phoneNb'] = Mage::getSingleton('core/session')->getNumberTel();
+        }
         $fields['consumer.mobilePhoneOperator'] = 1;
         
         if($order) {
@@ -165,7 +220,7 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         
         $currentDate = Mage::app()->getLocale()->date()->toString('YYYY-MM-dd');
         $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($currentDate)) - 5184000;
-        echo $dataForFilter = date('Y-m-d', $dateTimestamp);
+        //echo $dataForFilter = date('Y-m-d', $dateTimestamp);
         
         $ordersGood = Mage::getModel('sales/order')->getCollection()
                             ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
@@ -195,7 +250,7 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
             $count += 1;
         }
         
-        var_dump($fields);
+        //var_dump($fields);
         
         return $fields;
     }

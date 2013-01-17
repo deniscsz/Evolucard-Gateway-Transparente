@@ -125,9 +125,9 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label for="shipping:fax"><?php echo $this->__('Fax') ?></label>
+                            <label for="shipping:fax"><?php echo $this->__('Celular') ?></label>
                             <div class="input-box">
-                                <input type="text" name="shipping[fax]" value="<?php echo $this->htmlEscape($this->getAddress()->getFax()) ?>" title="<?php echo $this->__('Fax') ?>" class="input-text" id="shipping:fax" onchange="shipping.setSameAsBilling(false);" />
+                                <input type="text" name="shipping[fax]" value="<?php echo $this->htmlEscape($this->getAddress()->getFax()) ?>" title="<?php echo $this->__('Celular') ?>" class="input-text" id="shipping:fax" onchange="shipping.setSameAsBilling(false);" />
                             </div>
                         </div>
                     </li>
@@ -163,5 +163,6 @@
     $('shipping-address-select') && shipping.newAddress(!$('shipping-address-select').value);
 
     var shippingRegionUpdater = new RegionUpdater('shipping:country_id', 'shipping:region', 'shipping:region_id', countryRegions, undefined, 'shipping:postcode');
+    
 //]]>
 </script>

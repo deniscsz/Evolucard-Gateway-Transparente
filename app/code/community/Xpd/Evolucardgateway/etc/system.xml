@@ -27,7 +27,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </title>
-                        <order_status translate="label">
+                        <!--order_status translate="label">
                             <label>New order status</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_order_status</source_model>
@@ -35,9 +35,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                        </order_status>
+                        </order_status-->
                         <cctypes translate="label">
-                            <label>Credit Card Types</label>
+                            <label>Cartões Aceitos</label>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>Xpd_Evolucardgateway_Model_Source_Cartoes</source_model>
                             <sort_order>20</sort_order>
@@ -130,15 +130,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </captura>
-                        <gerar_invoice translate="label">
-                            <label>Gerar invoice</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>7</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </gerar_invoice>
                         <mostrar_parcelamento translate="label">
                             <label>Exibir parcelamento</label>
                             <frontend_type>select</frontend_type>

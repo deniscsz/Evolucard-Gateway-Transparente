@@ -72,18 +72,18 @@ function numeros(v){
         <?php $parcela2 = end($this->getParcelas()); ?>
 		<ul class="card-logo">
 		<?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
-			<li>
+			<li id="li-card-<?php echo $_typeCode ?>" class="seleciona-bandeiras-cards">
 				<label for="card-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" />
 			</li>
 		<?php endforeach ?>
 		</ul>
     </li>
 </ul>
-    <ul id="payment_form_<?php echo $_code ?>" style="display:none">
-    <li>
+    <ul id="payment_form_<?php echo $_code ?>" style="display:block">
+    <li style="display: none;">
         <div class="input-box">
             <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label><br />
-            <select id="<?php echo $_code ?>_cc_type" name="payment<?php echo $fieldCode; ?>[cc_type]" class="required-entry validate-card-type-select" onChange="javascript:onCardChange(this)">
+            <select id="<?php echo $_code ?>_cc_type" style="display: block;" name="payment<?php echo $fieldCode; ?>[cc_type]" class="required-entry validate-card-type-select" onChange="javascript:onCardChange(this)">
                 <option value=""><?php echo $this->__('--Please Select--') ?></option>
             <?php $_ccType = $this->getInfoData('cc_type') ?>
             <?php $ccTypes = $this->getCcAvailableTypes(); ?>
@@ -96,7 +96,7 @@ function numeros(v){
                         $selected = '';
                     }
                 ?>
-                <option value="<?php echo $_typeCode ?>" <?php echo $selected; ?>><?php echo $_typeName ?></option>
+                <option id="opt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>" <?php echo $selected; ?>><?php echo $_typeName ?></option>
             <?php endforeach ?>
             </select>
         </div>
@@ -157,37 +157,62 @@ function numeros(v){
         </div>
     </li>
     <?php $checkout = Mage::getSingleton('checkout/session')->getQuote(); ?>
-    <?php $billing = $checkout->getBillingAddress(); ?>
-    <li class="form-evolucard-celular">
+    <?php $billing = $checkout->getBillingAddress();
+    $tel_b = $billing->getData("telephone");
+    $cel_b = $billing->getData("fax");
+    
+    $tel_ddd = substr($tel_b,1,2);
+    $cel_ddd = substr($cel_b,1,2);
+    
+    $cel_num = substr($cel_b,4);
+    $tel_num = substr($tel_b,4);    
+    ?>
+    <li class="form-evolucard-celular" id="form-evolucard-celular">
         <label class="required"><em>*</em>Celular</label>
         <div class="input-box">
-            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" size="3" id="<?php echo $_code ?>_ddi_cel" name="payment[ddi_cel]" value="55" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" size="3" id="<?php echo $_code ?>_ddd_cel" name="payment[ddd_cel]" value="" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('Celular') ?>" placeholder="Celular" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_cel" name="payment[number_cel]" value="<?php //echo $billing->getData("telephone") ? $billing->getData("telephone") : 'Nada'; ?>" maxlength="9" />
-        </div>
-    </li>
-    <li class="form-evolucard-telefone">
-        <label class="required"><em>*</em>Telefone</label>
-        <div class="input-box">
-            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="" maxlength="9" />
+            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" size="3" id="<?php echo $_code ?>_ddi_cel" name="payment[ddi_cel]" value="55" maxlength="3" style="display: none;"/>
+            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" size="3" id="<?php echo $_code ?>_ddd_cel" name="payment[ddd_cel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
+            <input type="text" title="<?php echo $this->__('Celular') ?>" placeholder="Celular" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_cel" name="payment[number_cel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
         </div>
     </li>
     <li class="form-evolucard-create-account">
         <div class="input-box">
-            <input type="checkbox" id="<?php echo $_code ?>_create_account" name="payment[create_account]"/>
+            <input type="checkbox" id="<?php echo $_code ?>_create_account" name="payment[create_account]" onclick="ChkBoxMethod();" checked="yes" />
             <label style="float: right; width: 235px;" for="<?php echo $_code ?>_create_account"><?php echo $this->__('Aceito pagar com 1-Click Evolucard na próxima compra'); ?></label>
         </div>
-        
+    </li>
+    <li class="form-evolucard-telefone" id="form-evolucard-telefone">
+        <label class="required"><em>*</em>Telefone</label>
+        <div class="input-box">
+            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
+            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_ddd : ''; ?>" maxlength="3" />
+            <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_num : ''; ?>" maxlength="9" />
+        </div>
     </li>
 </ul>
 </fieldset>
-<style type="text/css">
-.card-logo { }
-.card-logo li { float: left; text-align: center; margin-right: 15px !important;height:57px;vertical-align:bottom;display:block; position:relative; }
-.card-logo li .validation-advice {position:absolute;top:55px;width:150px}
-.payment-methods .form-list li .input-box .input-text.cvv { width:50px; margin-right:5px}
-.payment-methods .form-list li .input-box select { width:auto !important;margin-right:5px}
-</style>
+<script type="text/javascript">
+
+//document.observe("dom:loaded", bodyOnload);
+
+function ChkBoxMethod(){
+    if(!$('evolucardgateway_create_account').checked) { // Desmarcar
+         //$('form-evolucard-celular').hide();
+         $('form-evolucard-telefone').hide();
+    }
+    else { // Marcar
+        //$('form-evolucard-celular').show();
+        $('form-evolucard-telefone').show();
+    }
+}
+
+$$('.seleciona-bandeiras-cards').invoke('observe', 'click', function(){
+    $$('.seleciona-bandeiras-cards').invoke('removeClassName','select');
+    this.addClassName('select');
+    var idLi = this.id;
+    idLi = idLi.substr(8);
+    $('opt-'+ idLi +'').selected = true;
+});
+
+</script>
 

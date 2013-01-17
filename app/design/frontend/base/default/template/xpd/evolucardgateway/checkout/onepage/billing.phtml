@@ -120,15 +120,15 @@
                 </li>
                 <li class="fields">
                     <div class="field">
-                        <label for="billing:telephone" class="required"><em>*</em><?php echo $this->__('Telephone') ?></label>
+                        <label for="billing:fax"><?php echo $this->__('Celular') ?></label>
                         <div class="input-box">
-                            <input type="text" name="billing[telephone]" value="<?php echo $this->htmlEscape($this->getAddress()->getTelephone()) ?>" title="<?php echo $this->__('Telephone') ?>" class="input-text required-entry" id="billing:telephone" />
+                            <input type="text" name="billing[fax]" value="<?php echo $this->htmlEscape($this->getAddress()->getFax()) ?>" title="<?php echo $this->__('Celular') ?>" class="input-text" id="billing:fax" />
                         </div>
                     </div>
                     <div class="field">
-                        <label for="billing:fax"><?php echo $this->__('Fax') ?></label>
+                        <label for="billing:telephone" class=""><?php echo $this->__('Telefone Fixo') ?></label>
                         <div class="input-box">
-                            <input type="text" name="billing[fax]" value="<?php echo $this->htmlEscape($this->getAddress()->getFax()) ?>" title="<?php echo $this->__('Fax') ?>" class="input-text" id="billing:fax" />
+                            <input type="text" name="billing[telephone]" value="<?php echo $this->htmlEscape($this->getAddress()->getTelephone()) ?>" title="<?php echo $this->__('Telephone') ?>" class="input-text required-entry" id="billing:telephone" />
                         </div>
                     </div>
                 </li>
@@ -212,5 +212,8 @@
     $('billing-address-select') && billing.newAddress(!$('billing-address-select').value);
 
     var billingRegionUpdater = new RegionUpdater('billing:country_id', 'billing:region', 'billing:region_id', countryRegions, undefined, 'billing:postcode');
+    
+    va_tel = new MaskedInput('input[name="billing[telephone]"]', '(99)99999999?9');
+    va_cel = new MaskedInput('input[name="billing[fax]"]', '(99)99999999?9');
 //]]>
 </script>

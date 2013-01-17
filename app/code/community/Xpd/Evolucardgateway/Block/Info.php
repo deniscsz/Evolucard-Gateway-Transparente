@@ -42,5 +42,35 @@ class Xpd_Evolucardgateway_Block_Info extends Mage_Payment_Block_Info_Ccsave
 
 		return($order);
     }
+    
+    public function returnTransaction() {
+        $order = $this->getOrder();
+        if(isset($order)) {
+            return $order->getPayment()->getEvolucardTransactionId();//$order->getTransactionEvc();
+        }
+        else {
+            return NULL;
+        }
+    }
+    
+    public function returnAcqNumberTransaction() {
+        $order = $this->getOrder();
+        if(isset($order)) {
+            return $order->getPayment()->getAcqNumberTransaction();//$order->getTransactionEvc();
+        }
+        else {
+            return NULL;
+        }
+    }
+    
+    public function returnAuthorizationNumber() {
+        $order = $this->getOrder();
+        if(isset($order)) {
+            return $order->getPayment()->getAuthorizationNumber();//$order->getTransactionEvc();
+        }
+        else {
+            return NULL;
+        }
+    }
 }
 

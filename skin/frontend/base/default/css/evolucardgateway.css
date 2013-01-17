@@ -1,0 +1,121 @@
+/* by Denis (www.xpd.com.br) */
+#payment_form_evolucardgateway #evolucardgateway_cc_type, 
+#payment_form_evolucardgateway #evolucardgateway_cc_parcelas
+{
+    color: #333;
+    overflow: hidden;
+    height: 30px;
+    padding-top: 5px;
+    width: 250px;
+}
+
+#payment_form_evolucardgateway #evolucardgateway_expiration_yr {
+    color: #333;
+    overflow: hidden;
+    height: 30px;
+    padding-top: 5px;
+    width: 90px;
+}
+
+#payment_form_evolucardgateway #evolucardgateway_expiration {
+    color: #333;
+    overflow: hidden;
+    height: 30px;
+    padding-top: 5px;
+    width: 150px;
+}
+
+#payment_form_evolucardgateway #evolucardgateway_cc_number {
+    background: url("../images/evolucardgateway/padlock_clean.png") no-repeat scroll 225px white;
+}
+
+#payment_form_evolucardgateway select, #payment_form_evolucardgateway option {
+    outline: 0 none;
+    clear: both;
+    float: left;
+    font-size: 14px;
+}
+
+#payment_form_evolucardgateway .input-text {
+    width: 240px;
+    height: 25px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+#payment_form_evolucardgateway input {
+    padding-left: 5px;
+    color: black;
+    box-shadow: 0 0px 4px -2px #777 inset;
+}
+
+#payment_form_evolucardgateway #evolucardgateway_cc_cid {
+    width: 40px;
+    height: 25px;
+}
+
+#payment_form_evolucardgateway .form-evolucard-telefone {
+    
+}
+
+#payment_form_evolucardgateway .form-evolucard-telefone .ddi {
+    width: 30px;
+}
+
+#payment_form_evolucardgateway .form-evolucard-telefone .ddd {
+    width: 30px;
+}
+
+#payment_form_evolucardgateway .form-evolucard-telefone .number {
+    width: 158px;
+}
+
+#payment_form_evolucardgateway .form-evolucard-celular {
+    
+}
+
+#payment_form_evolucardgateway .form-evolucard-celular .ddi {
+    width: 30px;
+}
+
+#payment_form_evolucardgateway .form-evolucard-celular .ddd {
+    width: 30px;
+}
+
+#payment_form_evolucardgateway .form-evolucard-celular .number {
+    width: 158px;
+}
+
+.seleciona-bandeiras-cards {
+    cursor: pointer !important;
+    padding-left: 10px;
+    padding-right: 0px;
+}
+
+.seleciona-bandeiras-cards:hover {
+    cursor: pointer !important;
+    background-color: #F0F0F0 !important;
+    border: 1px solid #CCC !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    border-radius: 5px !important;
+    padding-left: 10px;
+    padding-right: 0px;
+}
+
+.seleciona-bandeiras-cards.select {
+    cursor: pointer !important;
+    background-color: #F0F0F0 !important;
+    border: 1px solid #CCC !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    border-radius: 5px !important;
+    padding-left: 10px;
+    padding-right: 0px;
+}
+
+.card-logo { }
+.card-logo li { float: left; text-align: center; margin-right: 0px !important;height:57px;vertical-align:bottom;display:block; position:relative; }
+.card-logo li .validation-advice {position:absolute;top:55px;width:150px}
+.payment-methods .form-list li .input-box .input-text.cvv { width:50px; margin-right:5px}
+.payment-methods .form-list li .input-box select { width:auto !important;margin-right:5px}

@@ -23,7 +23,7 @@ class Octagono_Cielo_Block_Parcelas extends Mage_Core_Block_Template
     protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('octagono/cielo/parcelas.phtml');
+        $this->setTemplate('xpd/evolucardgateway/parcelas.phtml');
     }
 
     protected function _beforeToHtml()
