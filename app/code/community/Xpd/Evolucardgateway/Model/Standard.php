@@ -51,6 +51,7 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         Mage::getSingleton('core/session')->setDdiTel($data->getDdiTel());
         Mage::getSingleton('core/session')->setDddTel($data->getDddTel());
         Mage::getSingleton('core/session')->setNumberTel($data->getNumberTel());
+        Mage::getSingleton('core/session')->setCreateAccount($data->getCreateAccount());
         
         return $this;
     }
@@ -137,11 +138,18 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         $fields['merchantCode'] = Mage::getStoreConfig('payment/evolucardgateway/evocode');
         $fields['docNumber'] = Mage::helper('evolucardgateway')->convertOrderId($order->getId());
         $fields['consumer.name'] = $customer->getName();
-        if($create_account) {
-            $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
-            $fields['consumer.mobileAc'] = Mage::getSingleton('core/session')->getDddCel();
-            $fields['consumer.mobileNb'] = Mage::getSingleton('core/session')->getNumberCel();
-        }
+        
+        $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
+        $fields['consumer.mobileAc'] = Mage::getSingleton('core/session')->getDddCel();
+        $fields['consumer.mobileNb'] = Mage::getSingleton('core/session')->getNumberCel();
+        
+        //if(!$create_account && !$fields['consumer.mobileNb']){
+//            $fields['consumer.mobileCc'] = '';
+//            $fields['consumer.mobileAc'] = '';
+//            $fields['consumer.mobileNb'] = '';
+//            //$fields['consumer.mobilePhoneOperator'] = '';
+//        }
+        
         //echo $order->getCustomerDob();
         $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($order->getCustomerDob())) + 15000;
         $fields['consumer.birthDate'] = $dataForFilter = date('Y-m-d', $dateTimestamp);
@@ -173,11 +181,16 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         $fields['value'] = number_format($order->getGrandTotal(), 2, '.', '');
         $fields['numberPayment'] = $this->formaPagamentoParcelas;
         $fields['installmentResponsible'] = $this->formaPagamentoProduto;
-        if($create_account) {
-            $fields['consumer.phoneCc'] = Mage::getSingleton('core/session')->getDdiTel();
-            $fields['consumer.phoneAc'] = Mage::getSingleton('core/session')->getDddTel();
-            $fields['consumer.phoneNb'] = Mage::getSingleton('core/session')->getNumberTel();
-        }
+        
+        $fields['consumer.phoneCc'] = Mage::getSingleton('core/session')->getDdiTel();
+        $fields['consumer.phoneAc'] = Mage::getSingleton('core/session')->getDddTel();
+        $fields['consumer.phoneNb'] = Mage::getSingleton('core/session')->getNumberTel();
+        
+        //if(!$create_account && !$fields['consumer.phoneNb'] && !$fields['consumer.phoneAc']) {
+//            $fields['consumer.mobileCc'] = '';
+//            $fields['consumer.mobileAc'] = '';
+//            $fields['consumer.mobileNb'] = '';
+//        }
         $fields['consumer.mobilePhoneOperator'] = 1;
         
         if($order) {

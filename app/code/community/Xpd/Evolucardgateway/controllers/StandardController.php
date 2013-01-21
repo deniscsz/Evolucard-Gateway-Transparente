@@ -143,7 +143,15 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
             $evolucard->formaPagamentoParcelas = 1;
         }
         
-        $create_account = $this->_consultaEvolucard();
+        $evolucard->log('Criar Conta? '.Mage::getSingleton('core/session')->getCreateAccount());
+        
+        if(Mage::getSingleton('core/session')->getCreateAccount() == 'on') {
+            $create_account = $this->_consultaEvolucard();
+        }
+        else {
+            $create_account = false;
+        }
+        
         $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
         
         $continua = 0;
@@ -256,8 +264,8 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
                 if(isset($json_php->{'code'})) {
                     if($json_php->{'code'} == 'EV000') {
                         $evolucard->log('[ Cadastro Confirmado ou Recusado com sucesso ]');
-                        $flag = true;
-//                        echo ' Error Sucesso  <br/>';
+                        //$flag = true;
+                        //echo ' Error Sucesso  <br/>';
                     }
                     else {
                         $evolucard->log('[ Code EV070: Error ]');

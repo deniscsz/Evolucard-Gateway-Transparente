@@ -66,20 +66,20 @@
                     <div class="field">
                         <label for="billing:street2" class="required"><em>*</em><?php echo $this->__('Número') ?></label>
                         <div class="input-box">
-                            <input type="text" title="<?php echo $this->__('Número') ?>" name="billing[street][]" id="billing:street2" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(2)) ?>" class="input-text" />
+                            <input type="text" title="<?php echo $this->__('Número') ?>" name="billing[street][]" id="billing:street2" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(2)) ?>" class="input-text required-entry" />
                         </div>
                     </div>
                     <div class="field">
                         <label for="billing:street3" class="required"><em>*</em><?php echo $this->__('Complemento') ?></label>
                         <div class="input-box">
-                            <input type="text" title="<?php echo $this->__('Complemento') ?>" name="billing[street][]" id="billing:street3" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(3)) ?>" class="input-text" />
+                            <input type="text" title="<?php echo $this->__('Complemento') ?>" name="billing[street][]" id="billing:street3" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(3)) ?>" class="input-text required-entry" />
                         </div>
                     </div>
                 </li>
                 <li class="wide">
                     <label for="billing:street4" class="required"><em>*</em><?php echo $this->__('Bairro') ?></label>
                     <div class="input-box">
-                        <input type="text" title="<?php echo $this->__('Complemento') ?>" name="billing[street][]" id="billing:street4" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(4)) ?>" class="input-text" />
+                        <input type="text" title="<?php echo $this->__('Complemento') ?>" name="billing[street][]" id="billing:street4" value="<?php echo $this->htmlEscape($this->getAddress()->getStreet(4)) ?>" class="input-text required-entry" />
                     </div>
                 </li>
                 <li class="fields">
@@ -126,7 +126,7 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label for="billing:telephone" class=""><?php echo $this->__('Telefone Fixo') ?></label>
+                        <label for="billing:telephone" class="required"><em>*</em><?php echo $this->__('Telefone Fixo') ?></label>
                         <div class="input-box">
                             <input type="text" name="billing[telephone]" value="<?php echo $this->htmlEscape($this->getAddress()->getTelephone()) ?>" title="<?php echo $this->__('Telephone') ?>" class="input-text required-entry" id="billing:telephone" />
                         </div>
@@ -213,7 +213,8 @@
 
     var billingRegionUpdater = new RegionUpdater('billing:country_id', 'billing:region', 'billing:region_id', countryRegions, undefined, 'billing:postcode');
     
-    va_tel = new MaskedInput('input[name="billing[telephone]"]', '(99)99999999?9');
+    va_tel = new MaskedInput('input[name="billing[telephone]"]', '(99)99999999');
     va_cel = new MaskedInput('input[name="billing[fax]"]', '(99)99999999?9');
+    va_cep = new MaskedInput('input[name="billing[postcode]"]', '99999-999');
 //]]>
 </script>

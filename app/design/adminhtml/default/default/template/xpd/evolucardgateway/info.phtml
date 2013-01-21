@@ -1,0 +1,34 @@
+<?php
+/**
+ * Octagono Ecommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ *
+ *
+ * @category   Cielo
+ * @package    Octagono_Cielo
+ * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
+ * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ */
+ ?>
+<?php $additionaldata = unserialize($this->getInfo()->getData('additional_data')); ?>
+<strong><?php echo $this->getMethod()->getTitle(); ?></strong>
+<p style="margin: 0;"><?php echo $this->__('Name on the Card: %s', $this->htmlEscape($this->getInfo()->getCcOwner())) ?></p>
+<p style="margin: 0;"><?php echo $this->__('Credit Card Type: %s', $this->htmlEscape($this->getCcTypeName())) ?></p>
+<p style="margin: 0;"><?php echo $this->__('Credit Card Number: xxxx-%s', $this->htmlEscape($this->getInfo()->getCcLast4())) ?></p>
+<p style="margin: 0;"><?php echo $this->__('Expiration Date: %s/%s', $this->htmlEscape($this->getInfo()->getCcExpMonth()), $this->htmlEscape($this->getInfo()->getCcExpYear())) ?></p>
+<p style="margin: 0;"><?php echo $this->__('Número de Parcelas: %s', $additionaldata["cc_parcelas"]) ?></p>
+<?php if($this->returnTransaction()): ?>
+<p style="margin: 0;"><?php echo $this->__('Código da transação: %s', $this->returnTransaction()) ?></p>
+<?php endif; ?>
+<?php if($this->returnAcqNumberTransaction()): ?>
+<p style="margin: 0;"><?php echo $this->__('Código da transação com o Adquirente: %s', $this->returnAcqNumberTransaction()) ?></p>
+<?php endif; ?>
+<?php if($this->returnAuthorizationNumber()): ?>
+<p style="margin: 0;"><?php echo $this->__('Código de Autorização: %s', $this->returnAuthorizationNumber()) ?></p>
+<?php endif; ?>
