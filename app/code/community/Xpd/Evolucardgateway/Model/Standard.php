@@ -139,9 +139,15 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         $fields['docNumber'] = Mage::helper('evolucardgateway')->convertOrderId($order->getId());
         $fields['consumer.name'] = $customer->getName();
         
-        $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
         $fields['consumer.mobileAc'] = Mage::getSingleton('core/session')->getDddCel();
         $fields['consumer.mobileNb'] = Mage::getSingleton('core/session')->getNumberCel();
+        
+        if($fields['consumer.mobileNb'] && $fields['consumer.mobileAc']) {
+            $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
+        }
+        else {
+            $fields['consumer.mobileCc'] = $fields['consumer.mobileAc'];
+        }
         
         //if(!$create_account && !$fields['consumer.mobileNb']){
 //            $fields['consumer.mobileCc'] = '';
@@ -182,16 +188,23 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         $fields['numberPayment'] = $this->formaPagamentoParcelas;
         $fields['installmentResponsible'] = $this->formaPagamentoProduto;
         
-        $fields['consumer.phoneCc'] = Mage::getSingleton('core/session')->getDdiTel();
         $fields['consumer.phoneAc'] = Mage::getSingleton('core/session')->getDddTel();
         $fields['consumer.phoneNb'] = Mage::getSingleton('core/session')->getNumberTel();
+        if($fields['consumer.phoneNb'] && $fields['consumer.phoneAc']) {
+            $fields['consumer.phoneCc'] = Mage::getSingleton('core/session')->getDdiTel();
+        }
+        else {
+            $fields['consumer.phoneCc'] = $fields['consumer.phoneNb'];
+        }
         
-        //if(!$create_account && !$fields['consumer.phoneNb'] && !$fields['consumer.phoneAc']) {
+        if($create_account == true) {
+            $fields['consumer.mobilePhoneOperator'] = 1;
+        }
 //            $fields['consumer.mobileCc'] = '';
 //            $fields['consumer.mobileAc'] = '';
 //            $fields['consumer.mobileNb'] = '';
 //        }
-        $fields['consumer.mobilePhoneOperator'] = 1;
+        //$fields['consumer.mobilePhoneOperator'] = 1;
         
         if($order) {
             $billingAddress = !$order->getIsVirtual() ? $order->getBillingAddress() : null;

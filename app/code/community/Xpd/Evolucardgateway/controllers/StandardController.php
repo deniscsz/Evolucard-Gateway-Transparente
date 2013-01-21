@@ -269,13 +269,13 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
                     }
                     else {
                         $evolucard->log('[ Code EV070: Error ]');
-                        $flag = false;
+                        //$flag = false;
 //                        echo ' Error EV070  <br/>';
                     }
                 }
                 else {
                     $evolucard->log('[ Error with JSON ]');
-                    $flag = false;
+                    //$flag = false;
 //                    echo ' Error with JSON  <br/>';
                 }
             }
