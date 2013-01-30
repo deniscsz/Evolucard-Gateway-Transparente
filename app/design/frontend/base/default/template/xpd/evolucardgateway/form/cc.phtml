@@ -1,19 +1,10 @@
 <?php
 /**
- * Octagono Ecommerce
+ * Evolucard
  *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the EULA
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
- *
- *
- * @category   Cielo
- * @package    Octagono_Cielo
- * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
- * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ * @category   Payments
+ * @package    Xpd_Evolucardgateway
+ * @license    OSL v3.0
  */
  ?>
 <?php
@@ -80,7 +71,7 @@ function numeros(v){
     </li>
 </ul>
     <ul id="payment_form_<?php echo $_code ?>" style="display:block">
-    <li style="display: none;">
+    <li>
         <div class="input-box">
             <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label><br />
             <select id="<?php echo $_code ?>_cc_type" style="display: block;" name="payment<?php echo $fieldCode; ?>[cc_type]" class="required-entry validate-card-type-select" onChange="javascript:onCardChange(this)">
@@ -120,7 +111,7 @@ function numeros(v){
                 <select id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]" class="month required-entry">
                 <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
                 <?php foreach ($this->getCcMonths() as $k=>$v): ?>
-                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                    <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v[0] == 'M' ? $v : substr($v,0,3); ?></option>
                 <?php endforeach ?>
                 </select>
             </div>
@@ -170,7 +161,7 @@ function numeros(v){
     <li class="form-evolucard-create-account">
         <div class="input-box">
             <input type="checkbox" id="<?php echo $_code ?>_create_account" name="payment[create_account]" onclick="ChkBoxMethod();" checked="yes" />
-            <label style="float: right; width: 235px;" for="<?php echo $_code ?>_create_account"><?php echo $this->__('Aceito pagar com 1-Click Evolucard na próxima compra'); ?></label>
+            <label style="float: right; width: 235px;" for="<?php echo $_code ?>_create_account"><?php echo $this->__('Aceito pagar com 1-Click') . ' ' . (Mage::getStoreConfig('payment/evolucardgateway/storename') ? Mage::getStoreConfig('payment/evolucardgateway/storename') : Mage::app()->getStore()->getName()) . ' ' . $this->__('na próxima compra'); ?></label>
         </div>
     </li>
     <?php //if((strlen($cel_num) == 8 || strlen($cel_num) == 9) && strlen($cel_ddd) == 2): ?>
@@ -217,13 +208,13 @@ function ChkBoxMethod(){
     }
 }
 
-$$('.seleciona-bandeiras-cards').invoke('observe', 'click', function(){
+/*$$('.seleciona-bandeiras-cards').invoke('observe', 'click', function(){
     $$('.seleciona-bandeiras-cards').invoke('removeClassName','select');
     this.addClassName('select');
     var idLi = this.id;
     idLi = idLi.substr(8);
     $('opt-'+ idLi +'').selected = true;
-});
+});*/
 
 </script>
 

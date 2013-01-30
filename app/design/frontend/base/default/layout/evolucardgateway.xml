@@ -4,6 +4,8 @@
     <default>
         <reference name="head">
             <action method="addItem" ifconfig="payment/evolucardgateway/active"><type>skin_css</type><name>css/evolucardgateway.css</name></action>
+            <action method="addItem" ifconfig="payment/evolucardgateway/active"><type>skin_css</type><name>css/evolucardgateway.css</name></action>
+            <action method="addItem" ifconfig="payment/evolucardgateway/active"><type>skin_js</type><name>js/evolucardgateway/prototype.maskedinput.js</name></action>
         </reference>
     </default>
     
@@ -11,7 +13,6 @@
     </evolucardgateway_index_index>
     
     <checkout_onepage_index>
-        <remove name="right"/>
         <reference name="checkout.onepage.billing">
             <action method="setTemplate"><template>xpd/evolucardgateway/persistent/checkout/onepage/billing.phtml</template></action>
         </reference>

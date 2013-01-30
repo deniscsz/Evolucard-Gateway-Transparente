@@ -1,19 +1,10 @@
 <?php
 /**
- * Octagono Ecommerce
+ * Evolucard
  *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the EULA
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
- *
- *
- * @category   Cielo
- * @package    Octagono_Cielo
- * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
- * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ * @category   Payments
+ * @package    Xpd_Evolucardgateway
+ * @license    OSL v3.0
  */
 class Xpd_Evolucardgateway_Block_Standard_Redirect extends Mage_Core_Block_Abstract
 {

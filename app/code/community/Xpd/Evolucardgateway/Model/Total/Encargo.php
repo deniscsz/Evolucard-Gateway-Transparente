@@ -1,5 +1,14 @@
 <?php
-
+/**
+ * Evolucard
+ *
+ * OSL v3.0
+ *
+ * @category   Payments
+ * @package    Xpd_Gatewaytransparente
+ */
+ ?>
+<?php
 /**
  * Your custom total model
  *

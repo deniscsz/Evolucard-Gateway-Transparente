@@ -22,7 +22,7 @@
     overflow: hidden;
     height: 30px;
     padding-top: 5px;
-    width: 150px;
+    width: 70px;
 }
 
 #payment_form_evolucardgateway #evolucardgateway_cc_number {
@@ -86,7 +86,7 @@
     width: 158px;
 }
 
-.seleciona-bandeiras-cards {
+/*.seleciona-bandeiras-cards {
     cursor: pointer !important;
     padding-left: 10px;
     padding-right: 0px;
@@ -115,7 +115,7 @@
     border-radius: 5px !important;
     padding-left: 10px;
     padding-right: 0px;
-}
+}*/
 
 .card-logo { }
 .card-logo li { float: left; text-align: center; margin-right: 0px !important;height:57px;vertical-align:bottom;display:block; position:relative; }

@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Evolucard
+ *
+ * @category   Payments
+ * @package    Xpd_Evolucardgateway
+ * @license    OSL v3.0
+ */
 class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abstract {
 
     protected $_code = 'evolucardgateway';
@@ -137,13 +143,13 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         
         $fields['merchantCode'] = Mage::getStoreConfig('payment/evolucardgateway/evocode');
         $fields['docNumber'] = Mage::helper('evolucardgateway')->convertOrderId($order->getId());
-        $fields['consumer.name'] = $customer->getName();
         
         $fields['consumer.mobileAc'] = Mage::getSingleton('core/session')->getDddCel();
         $fields['consumer.mobileNb'] = Mage::getSingleton('core/session')->getNumberCel();
         
         if($fields['consumer.mobileNb'] && $fields['consumer.mobileAc']) {
             $fields['consumer.mobileCc'] = Mage::getSingleton('core/session')->getDdiCel();
+            $fields['consumer.mobilePhoneOperator'] = 1;
         }
         else {
             $fields['consumer.mobileCc'] = $fields['consumer.mobileAc'];
@@ -159,17 +165,6 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         //echo $order->getCustomerDob();
         $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($order->getCustomerDob())) + 15000;
         $fields['consumer.birthDate'] = $dataForFilter = date('Y-m-d', $dateTimestamp);
-        
-        if($customer->getCpfcnpj()) {
-            $cpf = str_replace('-','',str_replace('.','',$customer->getCpfcnpj()));
-            $fields['consumer.document'] = $cpf;
-        }
-        else {
-            $cpf = str_replace('-','',str_replace('.','',$customer->getTaxvat()));
-            $fields['consumer.document'] = $cpf;
-        }
-        
-        $fields['consumer.email'] = $customer->getEmail();
         
         switch($payment->getData('cc_type')) {
             case 'visa': $fields['consumer.cardPaymentBrand'] = 1; break;
@@ -196,74 +191,131 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         else {
             $fields['consumer.phoneCc'] = $fields['consumer.phoneNb'];
         }
-        
-        if($create_account == true) {
-            $fields['consumer.mobilePhoneOperator'] = 1;
-        }
 //            $fields['consumer.mobileCc'] = '';
 //            $fields['consumer.mobileAc'] = '';
 //            $fields['consumer.mobileNb'] = '';
 //        }
-        //$fields['consumer.mobilePhoneOperator'] = 1;
+//      $fields['consumer.mobilePhoneOperator'] = 1;
         
-        if($order) {
-            $billingAddress = !$order->getIsVirtual() ? $order->getBillingAddress() : null;
-            if($billingAddress) {
-                $fields['consumer.address.zipcode'] = str_replace('-','',str_replace('.','',$billingAddress->getData("postcode")));
-                //Todos os Address preenchidos
-                if($billingAddress->getStreet(1) && $billingAddress->getStreet(2) && $billingAddress->getStreet(3) && $billingAddress->getStreet(4)) {
+        $billingAddress = !$order->getIsVirtual() ? $order->getBillingAddress() : null;
+        if($billingAddress) {
+            $fields['consumer.address.zipcode'] = str_replace('-','',str_replace('.','',$billingAddress->getData("postcode")));
+            //Todos os Address preenchidos
+            if($billingAddress->getStreet(1) && $billingAddress->getStreet(2) && $billingAddress->getStreet(3) && $billingAddress->getStreet(4)) {
+                $fields['consumer.address.address'] = $billingAddress->getStreet(1);
+                $fields['consumer.address.addressNumber'] = $billingAddress->getStreet(2);
+                $fields['consumer.address.addComplement'] = $billingAddress->getStreet(3);
+                $fields['consumer.address.district'] = $billingAddress->getStreet(4);
+            }
+            else {
+                if($billingAddress->getStreet(1) && $billingAddress->getStreet(2) && $billingAddress->getStreet(3) && !$billingAddress->getStreet(4)) {
                     $fields['consumer.address.address'] = $billingAddress->getStreet(1);
+                    $fields['consumer.address.addComplement'] = $billingAddress->getStreet(2);
                     $fields['consumer.address.addressNumber'] = $billingAddress->getStreet(2);
-                    $fields['consumer.address.addComplement'] = $billingAddress->getStreet(3);
-                    $fields['consumer.address.district'] = $billingAddress->getStreet(4);
+                    $fields['consumer.address.district'] = $billingAddress->getStreet(3);
                 }
                 else {
-                    if($billingAddress->getStreet(1) && $billingAddress->getStreet(2) && $billingAddress->getStreet(3) && !$billingAddress->getStreet(4)) {
+                    if($billingAddress->getStreet(1) && $billingAddress->getStreet(2) && !$billingAddress->getStreet(3) && !$billingAddress->getStreet(4)) {
                         $fields['consumer.address.address'] = $billingAddress->getStreet(1);
                         $fields['consumer.address.addComplement'] = $billingAddress->getStreet(2);
                         $fields['consumer.address.addressNumber'] = $billingAddress->getStreet(2);
-                        $fields['consumer.address.district'] = $billingAddress->getStreet(3);
+                        $fields['consumer.address.district'] = $billingAddress->getStreet(2);
                     }
                     else {
-                        if($billingAddress->getStreet(1) && $billingAddress->getStreet(2) && !$billingAddress->getStreet(3) && !$billingAddress->getStreet(4)) {
-                            $fields['consumer.address.address'] = $billingAddress->getStreet(1);
-                            $fields['consumer.address.addComplement'] = $billingAddress->getStreet(2);
-                            $fields['consumer.address.addressNumber'] = $billingAddress->getStreet(2);
-                            $fields['consumer.address.district'] = $billingAddress->getStreet(2);
-                        }
-                        else {
-                            $fields['consumer.address.address'] = $billingAddress->getStreet(1);
-                            $fields['consumer.address.addComplement'] = $billingAddress->getStreet(2);
-                            $fields['consumer.address.addressNumber'] = $billingAddress->getStreet(2);
-                            $fields['consumer.address.district'] = $billingAddress->getStreet(2);
-                        }
+                        $fields['consumer.address.address'] = $billingAddress->getStreet(1);
+                        $fields['consumer.address.addComplement'] = $billingAddress->getStreet(2);
+                        $fields['consumer.address.addressNumber'] = $billingAddress->getStreet(2);
+                        $fields['consumer.address.district'] = $billingAddress->getStreet(2);
                     }
                 }
-                $fields['consumer.address.city'] = $billingAddress->getData("city");
-                $fields['consumer.address.state'] = $billingAddress->getRegionCode();
+            }
+            $fields['consumer.address.city'] = $billingAddress->getData("city");
+            
+            if($billingAddress->getRegionCode()) {
+                switch($billingAddress->getRegionCode()) {
+                    case 'AC': $fields['consumer.address.state'] = 'Acre'; break;
+                    case 'AL': $fields['consumer.address.state'] = 'Alagoas'; break;
+                    case 'AP': $fields['consumer.address.state'] = 'Amapá'; break;
+                    case 'BA': $fields['consumer.address.state'] = 'Bahia'; break;
+                    case 'CE': $fields['consumer.address.state'] = 'Ceará'; break;
+                    case 'DF': $fields['consumer.address.state'] = 'Distrito Federal'; break;
+                    case 'ES': $fields['consumer.address.state'] = 'Espírito Santo'; break;
+                    case 'GO': $fields['consumer.address.state'] = 'Goais'; break;
+                    case 'MA': $fields['consumer.address.state'] = 'Maranhão'; break;
+                    case 'MT': $fields['consumer.address.state'] = 'Mato Grosso'; break;
+                    case 'MS': $fields['consumer.address.state'] = 'Mato Grosso do Sul'; break;
+                    case 'MG': $fields['consumer.address.state'] = 'Minas Gerais'; break;
+                    case 'PA': $fields['consumer.address.state'] = 'Pará'; break;
+                    case 'PB': $fields['consumer.address.state'] = 'Paraíba'; break;
+                    case 'PR': $fields['consumer.address.state'] = 'Paraná'; break;
+                    case 'PE': $fields['consumer.address.state'] = 'Pernambuco'; break;
+                    case 'PI': $fields['consumer.address.state'] = 'Piauí'; break;
+                    case 'RJ': $fields['consumer.address.state'] = 'Rio de Janeiro'; break;
+                    case 'RN': $fields['consumer.address.state'] = 'Rio Grande do Norte'; break;
+                    case 'RS': $fields['consumer.address.state'] = 'Rio Grande do Sul'; break;
+                    case 'RO': $fields['consumer.address.state'] = 'Rondônia'; break;
+                    case 'RR': $fields['consumer.address.state'] = 'Roraima'; break;
+                    case 'SC': $fields['consumer.address.state'] = 'Santa Catarina'; break;
+                    case 'SP': $fields['consumer.address.state'] = 'São Paulo'; break;
+                    case 'SE': $fields['consumer.address.state'] = 'Sergipe'; break;
+                    case 'TO': $fields['consumer.address.state'] = 'Tocantins'; break;
+                    default: $fields['consumer.address.state'] = $billingAddress->getRegionCode();
+                }
             }
         }
         
-        $currentDate = Mage::app()->getLocale()->date()->toString('YYYY-MM-dd');
-        $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($currentDate)) - 5184000;
-        //echo $dataForFilter = date('Y-m-d', $dateTimestamp);
+        if($consumer) {
+            $fields['consumer.name'] = $customer->getName();
+            
+            if($customer->getCpfcnpj() || $billingAddress->getCpfcnpj()) {
+                $cpf0 = $customer->getCpfcnpj() ? $customer->getCpfcnpj() : $billingAddress->getCpfcnpj();
+                $cpf = str_replace('-','',str_replace('.','',$cpf0));
+                $fields['consumer.document'] = $cpf;
+            }
+            else {
+                $cpf = str_replace('-','',str_replace('.','',$customer->getTaxvat()));
+                $fields['consumer.document'] = $cpf;
+            }
         
-        $ordersGood = Mage::getModel('sales/order')->getCollection()
-                            ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
-                            ->addFieldToFilter('status','complete')
-                            ->addAttributeToFilter('created_at', array('gteq' => $dataForFilter));
-        $ordersComplete = $ordersGood->getSize();
-        
-        $ordersCanceled = Mage::getModel('sales/order')->getCollection()
-                            ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
-                            ->addFieldToFilter('status','fraud')
-                            ->addAttributeToFilter('created_at', array('gteq' => $dataForFilter));
-        $ordersCanceled = $ordersCanceled->getSize();
-        
-        if($ordersCanceled <= 0 && $ordersComplete > 0) {
-            $fields['consumer.knowByMerchant'] = 'Y';
+            $fields['consumer.email'] = $customer->getEmail();
+            
+            $currentDate = Mage::app()->getLocale()->date()->toString('YYYY-MM-dd');
+            $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($currentDate)) - 5184000;
+            //echo $dataForFilter = date('Y-m-d', $dateTimestamp);
+            
+            $ordersGood = Mage::getModel('sales/order')->getCollection()
+                                ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
+                                ->addFieldToFilter('status','complete')
+                                ->addAttributeToFilter('created_at', array('gteq' => $dataForFilter));
+            $ordersComplete = $ordersGood->getSize();
+            
+            $ordersCanceled = Mage::getModel('sales/order')->getCollection()
+                                ->addFieldToFilter('customer_id', array('eq' => array($customer->getId())))
+                                ->addFieldToFilter('status','fraud')
+                                ->addAttributeToFilter('created_at', array('gteq' => $dataForFilter));
+            $ordersCanceled = $ordersCanceled->getSize();
+            
+            if($ordersCanceled <= 0 && $ordersComplete > 0) {
+                $fields['consumer.knowByMerchant'] = 'Y';
+            }
+            else {
+                $fields['consumer.knowByMerchant'] = 'N';
+            }
         }
         else {
+            $fields['consumer.name'] = $billingAddress->getFirstname() . $billingAddress->getLastname();
+            
+            if($billingAddress->getCpfcnpj()) {
+                $cpf = str_replace('-','',str_replace('.','',$billingAddress->getCpfcnpj()));
+                $fields['consumer.document'] = $cpf;
+            }
+            else {
+                $cpf = str_replace('-','',str_replace('.','',$order->getCustomerTaxvat()));
+                $fields['consumer.document'] = $cpf;
+            }
+        
+            $fields['consumer.email'] = $order->getCustomerEmail();
+            
             $fields['consumer.knowByMerchant'] = 'N';
         }
         
@@ -275,9 +327,7 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
             $fields['productList'][$count]['productQuantity'] = $item->getQtyOrdered(); 
             $count += 1;
         }
-        
-        //var_dump($fields);
-        
+                
         return $fields;
     }
 }

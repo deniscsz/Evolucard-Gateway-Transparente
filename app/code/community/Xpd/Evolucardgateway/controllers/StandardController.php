@@ -1,20 +1,10 @@
 <?php
-
 /**
- * Octagono Ecommerce
+ * Evolucard
  *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the EULA
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
- *
- *
- * @category   Cielo
- * @package    Octagono_Cielo
- * @copyright  Copyright (c) 2009-2011 - Octagono Ecommerce - www.octagonoecommerce.com.br
- * @license    http://www.octagonoecommerce.com.br/eula-licenca-usuario-final.html
+ * @category   Payments
+ * @package    Xpd_Evolucardgateway
+ * @license    OSL v3.0
  */
 class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front_Action {
 
@@ -94,14 +84,14 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
                     else {
                         $evolucard->log('Null para consulta '. $json_php->{'code'});
 //                        print('Null para consulta<br/>');
-                        return null;
+                        return NULL;
                     }
                 }
             }
         }
         else {
             $evolucard->log('[ Function Json_Decode does not exist! ]');
-            return null;
+            return NULL;
         }
     }
 
@@ -152,15 +142,20 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
             $create_account = false;
         }
         
-        $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+        if($order->getCustomerId()) {
+            $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+        }
+        else {
+            $customer = false;
+        }
         
         $continua = 0;
-        if($create_account) {
+        if($create_account === true) {
             $customerData = $evolucard->buildDataToPost($customer,$order,$payment,true);
             $continua = 1;
         }
         else {
-            if($create_account == false) {
+            if($create_account === false) {
                 $customerData = $evolucard->buildDataToPost($customer,$order,$payment,false);
                 $continua = 2;
             }
@@ -231,56 +226,57 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
             }
             
 //            echo '<br/> vai confirmar o cadastro ou nao <br/>';
-            
-            if($evolucard->ambiente == "0") {
-                $url = 'https://www.evolucard.com.br/postServiceTest/updateConsumer';
-            }
-            else {
-                $url = 'https://www.evolucard.com.br/postService/updateConsumer';
-            }
-            
-            $fields = array(
-                'merchantCode' => Mage::getStoreConfig('payment/evolucardgateway/evocode'),
-                'mobileCc' => Mage::getSingleton('core/session')->getDdiCel(),
-                'mobileAc' => Mage::getSingleton('core/session')->getDddCel(),
-                'mobileNb' => Mage::getSingleton('core/session')->getNumberCel(),
-                'confirmConsumer' => $continua == 1 ? urlencode('Y') : urlencode('N')
-            );
-            
-//            var_dump($fields);
-            
-            $curlAdapter = new Varien_Http_Adapter_Curl();
-            $curlAdapter->setConfig(array('timeout' => 20));
-            $curlAdapter->write(Zend_Http_Client::POST, $url, '1.1', array(), $fields);
-            $resposta = $curlAdapter->read();
-//            echo '<br/><br/>';
-//            var_dump($resposta);
-//            echo '<br/><br/>';
-            
-            $retorno = substr($resposta,strpos($resposta, "\r\n\r\n"));
-            $curlAdapter->close();
-            if(function_exists('json_decode')) {
-                $json_php = json_decode($retorno);
-                if(isset($json_php->{'code'})) {
-                    if($json_php->{'code'} == 'EV000') {
-                        $evolucard->log('[ Cadastro Confirmado ou Recusado com sucesso ]');
-                        //$flag = true;
-                        //echo ' Error Sucesso  <br/>';
+            if($continua == 1) {
+                if($evolucard->ambiente == "0") {
+                    $url = 'https://www.evolucard.com.br/postServiceTest/updateConsumer';
+                }
+                else {
+                    $url = 'https://www.evolucard.com.br/postService/updateConsumer';
+                }
+                
+                $fields = array(
+                    'merchantCode' => Mage::getStoreConfig('payment/evolucardgateway/evocode'),
+                    'mobileCc' => Mage::getSingleton('core/session')->getDdiCel(),
+                    'mobileAc' => Mage::getSingleton('core/session')->getDddCel(),
+                    'mobileNb' => Mage::getSingleton('core/session')->getNumberCel(),
+                    'confirmConsumer' => $continua == 1 ? 'Y' : 'N'
+                );
+                
+                //var_dump($fields);
+                
+                $curlAdapter = new Varien_Http_Adapter_Curl();
+                $curlAdapter->setConfig(array('timeout' => 20));
+                $curlAdapter->write(Zend_Http_Client::POST, $url, '1.1', array(), $fields);
+                $resposta = $curlAdapter->read();
+    //            echo '<br/><br/>';
+    //            var_dump($resposta);
+    //            echo '<br/><br/>';
+                
+                $retorno = substr($resposta,strpos($resposta, "\r\n\r\n"));
+                $curlAdapter->close();
+                if(function_exists('json_decode')) {
+                    $json_php = json_decode($retorno);
+                    if(isset($json_php->{'code'})) {
+                        if($json_php->{'code'} == 'EV000') {
+                            $evolucard->log('[ Cadastro Confirmado ou Recusado com sucesso ]');
+                            //$flag = true;
+                            //echo ' Error Sucesso  <br/>';
+                        }
+                        else {
+                            $evolucard->log('[ Code EV070: Error ]');
+                            //$flag = false;
+    //                        echo ' Error EV070  <br/>';
+                        }
                     }
                     else {
-                        $evolucard->log('[ Code EV070: Error ]');
+                        $evolucard->log('[ Error with JSON ]');
                         //$flag = false;
-//                        echo ' Error EV070  <br/>';
+    //                    echo ' Error with JSON  <br/>';
                     }
                 }
                 else {
-                    $evolucard->log('[ Error with JSON ]');
-                    //$flag = false;
-//                    echo ' Error with JSON  <br/>';
+                    $flag = false;
                 }
-            }
-            else {
-                $flag = false;
             }
         }
         
