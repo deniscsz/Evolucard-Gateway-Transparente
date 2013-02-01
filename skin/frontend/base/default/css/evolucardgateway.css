@@ -86,6 +86,10 @@
     width: 158px;
 }
 
+.seleciona-bandeiras-cards input.radio {
+    cursor: pointer !important;
+}
+
 /*.seleciona-bandeiras-cards {
     cursor: pointer !important;
     padding-left: 10px;
@@ -118,7 +122,33 @@
 }*/
 
 .card-logo { }
-.card-logo li { float: left; text-align: center; margin-right: 0px !important;height:57px;vertical-align:bottom;display:block; position:relative; }
-.card-logo li .validation-advice {position:absolute;top:55px;width:150px}
-.payment-methods .form-list li .input-box .input-text.cvv { width:50px; margin-right:5px}
-.payment-methods .form-list li .input-box select { width:auto !important;margin-right:5px}
+
+.card-logo li { 
+    float: left;
+    text-align: center; 
+    margin-right: 0px !important;
+    height:75px;
+    vertical-align:bottom;
+    display:block;
+    position:relative;
+}
+
+.card-logo li input {
+    
+}
+
+.card-logo li .validation-advice {
+    position:absolute;
+    top:55px;
+    width:150px
+}
+
+.payment-methods .form-list li .input-box .input-text.cvv {
+    width:50px; 
+    margin-right:5px
+}
+
+.payment-methods .form-list li .input-box select { 
+    width:auto !important;
+    margin-right:5px
+}

@@ -64,14 +64,15 @@ function numeros(v){
 		<ul class="card-logo">
 		<?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
 			<li id="li-card-<?php echo $_typeCode ?>" class="seleciona-bandeiras-cards">
-				<label for="card-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" />
+				<label for="ropt-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" /></label>
+                <input type="radio" class="radio" id="ropt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>"/>
 			</li>
 		<?php endforeach ?>
 		</ul>
     </li>
 </ul>
-    <ul id="payment_form_<?php echo $_code ?>" style="display:block">
-    <li>
+    <ul id="payment_form_<?php echo $_code ?>">
+    <li  style="display:none">
         <div class="input-box">
             <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label><br />
             <select id="<?php echo $_code ?>_cc_type" style="display: block;" name="payment<?php echo $fieldCode; ?>[cc_type]" class="required-entry validate-card-type-select" onChange="javascript:onCardChange(this)">
@@ -208,13 +209,29 @@ function ChkBoxMethod(){
     }
 }
 
-/*$$('.seleciona-bandeiras-cards').invoke('observe', 'click', function(){
-    $$('.seleciona-bandeiras-cards').invoke('removeClassName','select');
-    this.addClassName('select');
-    var idLi = this.id;
-    idLi = idLi.substr(8);
-    $('opt-'+ idLi +'').selected = true;
-});*/
+$$('.seleciona-bandeiras-cards input.radio').invoke('observe', 'click', function(){
+    var meuID = this.id;
+    
+    $$('.seleciona-bandeiras-cards input.radio').each(function(e) {
+        var idLi = e.id;
+        
+        if(meuID != idLi) {
+            $(''+ idLi +'').checked = false;
+        }
+        else {
+            $(''+ idLi +'').checked = true;
+        }
+    });
+    
+    IDselect = meuID.substr(1,30);
+    $(''+IDselect+'').selected = true;
+});
+
+$('opt-visa').disabled=false;
+$('opt-master').disabled=false;
+$('opt-diners').disabled=false;
+$('opt-elo').disabled=false;
+$('opt-amex').disabled=false;
 
 </script>
 
