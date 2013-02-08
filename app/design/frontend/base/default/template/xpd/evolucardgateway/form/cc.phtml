@@ -25,13 +25,20 @@
 <script type="text/javascript">
 function onCardChange(selectElement) {
     var selCard = selectElement.options[selectElement.selectedIndex].value;
-    //alert(selCard);
-
+    
     if (selCard == 'diners') {
         $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 14);
+        //$('<?php echo $_code ?>_cc_number').setAttribute('size', 14);
     }
     else {
-        $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 16);
+        if (selCard == 'amex') {
+            $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 15);
+            //$('<?php echo $_code ?>_cc_number').setAttribute('size', 15);
+        }
+        else {
+            $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 16);
+            //$('<?php echo $_code ?>_cc_number').setAttribute('size', 16);
+        }
     }
 
     //quando um tipo de cartao e escolhida, limpa a escolha dos outros campos de tipo de cartao
@@ -138,7 +145,7 @@ function numeros(v){
         </div>
     </li>
     <?php endif; ?>
-    <li>
+    <li style="margin-bottom: 20px;">
         <label for="<?php echo $_code ?>_parcelas"><?php echo $this->__('Parcelas') ?> </label><br />
         <div class="input-box">
             <select id="<?php echo $_code ?>_cc_parcelas" name="payment[cc_parcelas]">
@@ -148,49 +155,91 @@ function numeros(v){
 	    </select>
         </div>
     </li>
-    <?php $checkout = Mage::getSingleton('checkout/session')->getQuote(); ?>
-    <?php $billing = $checkout->getBillingAddress();
-    $tel_b = $billing->getData("telephone");
-    $cel_b = $billing->getData("fax");
-    
-    $tel_ddd = substr($tel_b,1,2);
-    $cel_ddd = substr($cel_b,1,2);
-    
-    $cel_num = substr($cel_b,4);
-    $tel_num = substr($tel_b,4);    
-    ?>
-    <li class="form-evolucard-create-account">
-        <div class="input-box">
-            <input type="checkbox" id="<?php echo $_code ?>_create_account" name="payment[create_account]" onclick="ChkBoxMethod();" checked="yes" />
-            <label style="float: right; width: 235px;" for="<?php echo $_code ?>_create_account"><?php echo $this->__('Aceito pagar com 1-Click') . ' ' . (Mage::getStoreConfig('payment/evolucardgateway/storename') ? Mage::getStoreConfig('payment/evolucardgateway/storename') : Mage::app()->getStore()->getName()) . ' ' . $this->__('na próxima compra'); ?></label>
-        </div>
-    </li>
-    <?php //if((strlen($cel_num) == 8 || strlen($cel_num) == 9) && strlen($cel_ddd) == 2): ?>
-    <li class="form-evolucard-celular" id="form-evolucard-celular">
-        <label class="required"><em>*</em>Celular</label>
-        <div class="input-box">
-            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_cel" name="payment[ddi_cel]" value="55" maxlength="3" style="display: none;"/>
-            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_cel" name="payment[ddd_cel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_ddd : ''; ?>" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('Celular') ?>" placeholder="Celular" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_cel" name="payment[number_cel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_num : ''; ?>" maxlength="9" />
-        </div>
-    </li>
-    <?php if((strlen($tel_num) == 8 || strlen($tel_num) == 9) && strlen($tel_ddd) == 2): ?>
-    <li class="form-evolucard-telefone" id="form-evolucard-telefone-inputado" style="display: none;">
-        <div class="input-box">
-            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
-            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
-        </div>
-    </li>
+    <?php if(Mage::getStoreConfig('payment/evolucardgateway/cadastroone')): ?>
+        <?php $checkout = Mage::getSingleton('checkout/session')->getQuote(); ?>
+        <?php $billing = $checkout->getBillingAddress();
+        $tel_b = $billing->getData("telephone");
+        $cel_b = $billing->getData("fax");
+        
+        $tel_ddd = substr($tel_b,1,2);
+        $cel_ddd = substr($cel_b,1,2);
+        
+        $cel_num = substr($cel_b,4);
+        $tel_num = substr($tel_b,4);    
+        ?>
+        <li class="form-evolucard-create-account">
+            <div class="input-box">
+                <input type="checkbox" id="<?php echo $_code ?>_create_account" name="payment[create_account]" onclick="ChkBoxMethod();" checked="yes" />
+                <label style="float: right; width: 235px;" for="<?php echo $_code ?>_create_account"><?php echo $this->__('Aceito pagar com 1-Click') . ' ' . (Mage::getStoreConfig('payment/evolucardgateway/storename') ? Mage::getStoreConfig('payment/evolucardgateway/storename') : Mage::app()->getStore()->getName()) . ' ' . $this->__('na próxima compra'); ?></label>
+            </div>
+        </li>
+        <?php //if((strlen($cel_num) == 8 || strlen($cel_num) == 9) && strlen($cel_ddd) == 2): ?>
+        <li class="form-evolucard-celular" id="form-evolucard-celular">
+            <label class="required"><em>*</em>Celular</label>
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_cel" name="payment[ddi_cel]" value="55" maxlength="3" style="display: none;"/>
+                <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_cel" name="payment[ddd_cel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_ddd : ''; ?>" maxlength="3" />
+                <input type="text" title="<?php echo $this->__('Celular') ?>" placeholder="Celular" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_cel" name="payment[number_cel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_num : ''; ?>" maxlength="9" />
+            </div>
+        </li>
+        <?php if((strlen($tel_num) == 8 || strlen($tel_num) == 9) && strlen($tel_ddd) == 2): ?>
+        <li class="form-evolucard-telefone" id="form-evolucard-telefone-inputado" style="display: none;">
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
+                <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
+                <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
+            </div>
+        </li>
+        <?php else: ?>
+        <li class="form-evolucard-telefone" id="form-evolucard-telefone">
+            <label class="required"><em>*</em>Telefone</label>
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
+                <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
+                <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
+            </div>
+        </li>
+        <?php endif; ?>
     <?php else: ?>
-    <li class="form-evolucard-telefone" id="form-evolucard-telefone">
-        <label class="required"><em>*</em>Telefone</label>
-        <div class="input-box">
-            <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
-            <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
-            <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
-        </div>
-    </li>
+        <?php $checkout = Mage::getSingleton('checkout/session')->getQuote(); ?>
+        <?php $billing = $checkout->getBillingAddress();
+        $tel_b = $billing->getData("telephone");
+        $cel_b = $billing->getData("fax");
+        
+        $tel_ddd = substr($tel_b,1,2);
+        $cel_ddd = substr($cel_b,1,2);
+        
+        $cel_num = substr($cel_b,4);
+        $tel_num = substr($tel_b,4);    
+        ?>
+        
+        <?php //if((strlen($cel_num) == 8 || strlen($cel_num) == 9) && strlen($cel_ddd) == 2): ?>
+        <li class="form-evolucard-celular" id="form-evolucard-celular" style="display: none;">
+            <label class="required"><em>*</em>Celular</label>
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_cel" name="payment[ddi_cel]" value="55" maxlength="3" style="display: none;"/>
+                <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_cel" name="payment[ddd_cel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_ddd : ''; ?>" maxlength="3" />
+                <input type="text" title="<?php echo $this->__('Celular') ?>" placeholder="Celular" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" class="input-text number required-entry" size="9" id="<?php echo $_code ?>_number_cel" name="payment[number_cel]" value="<?php echo strlen($cel_num) == 8 || strlen($cel_num) == 9 ? $cel_num : ''; ?>" maxlength="9" />
+            </div>
+        </li>
+        <?php if((strlen($tel_num) == 8 || strlen($tel_num) == 9) && strlen($tel_ddd) == 2): ?>
+        <li class="form-evolucard-telefone" id="form-evolucard-telefone-inputado" style="display: none;">
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
+                <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
+                <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
+            </div>
+        </li>
+        <?php else: ?>
+        <li class="form-evolucard-telefone" id="form-evolucard-telefone" style="display: none;">
+            <label class="required"><em>*</em>Telefone</label>
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('DDI') ?>" placeholder="DDI" class="input-text ddi required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddi_tel" name="payment[ddi_tel]" value="55" maxlength="3" style="display: none;"/>
+                <input type="text" title="<?php echo $this->__('DDD') ?>" placeholder="DDD" class="input-text ddd required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="3" id="<?php echo $_code ?>_ddd_tel" name="payment[ddd_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_ddd : ''; ?>" maxlength="3" />
+                <input type="text" title="<?php echo $this->__('Telefone') ?>" placeholder="Telefone" class="input-text number required-entry" onkeyup="mascara(this,numeros)" onfocus="mascara(this,numeros)" onblur="mascara(this,numeros)" size="9" id="<?php echo $_code ?>_number_tel" name="payment[number_tel]" value="<?php echo strlen($tel_num) == 8 || strlen($tel_num) == 9 ? $tel_num : ''; ?>" maxlength="9" />
+            </div>
+        </li>
+        <?php endif; ?>
     <?php endif; ?>
 </ul>
 </fieldset>
@@ -225,6 +274,8 @@ $$('.seleciona-bandeiras-cards input.radio').invoke('observe', 'click', function
     
     IDselect = meuID.substr(1,30);
     $(''+IDselect+'').selected = true;
+    
+    onCardChange($('evolucardgateway_cc_type'));
 });
 
 $('opt-visa').disabled=false;
