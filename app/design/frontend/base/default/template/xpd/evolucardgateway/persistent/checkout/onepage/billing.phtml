@@ -225,10 +225,11 @@
             }
         });
     }
-    
+    <?php if(Mage::getStoreConfig('payment/evolucardgateway/enablevalidate')): ?>    
     va_tel = new MaskedInput('input[name="billing[telephone]"]', '(99)99999999');
     va_cel = new MaskedInput('input[name="billing[fax]"]', '(99)99999999?9');
     va_cep = new MaskedInput('input[name="billing[postcode]"]', '99999-999');
+    <?php endif; ?>
 //]]>
 
 </script>
