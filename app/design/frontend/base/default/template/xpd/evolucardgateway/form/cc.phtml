@@ -6,7 +6,7 @@
  * @package    Xpd_Evolucardgateway
  * @license    OSL v3.0
  * @author     Denis Spalenza - http://www.xpd.com.br/
- * 
+ *   
  */
  ?>
 <?php
@@ -25,31 +25,25 @@
 ?>
 
 <script type="text/javascript">
-function onCardChange(selectElement) {
-    var selCard = selectElement.options[selectElement.selectedIndex].value;
+function onCardChange(optElement) {
+    var meuID = optElement.id;
+    var selCard = optElement.value; 
     
     if (selCard == 'diners') {
         $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 14);
-        //$('<?php echo $_code ?>_cc_number').setAttribute('size', 14);
     }
     else {
         if (selCard == 'amex') {
             $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 15);
-            //$('<?php echo $_code ?>_cc_number').setAttribute('size', 15);
         }
         else {
             $('<?php echo $_code ?>_cc_number').setAttribute('maxlength', 16);
-            //$('<?php echo $_code ?>_cc_number').setAttribute('size', 16);
         }
     }
 
     //quando um tipo de cartao e escolhida, limpa a escolha dos outros campos de tipo de cartao
-    var results = $$('select');
-    results.each(function(elem){
-        if (selectElement != elem && elem.id.indexOf('cc_type') > 0) {
-            elem.value = '';
-        }
-    });
+    $('evolucardgateway_cc_number').value = "";
+    $('evolucardgateway_cc_cid').value = "";
 }
 function mascara(o,f){
     v_obj=o
@@ -65,41 +59,25 @@ function numeros(v){
 }
 </script>
 <fieldset class="form-list">
-<ul>
-     <li class="first">
-     	<br />
-		<?php $_ccType = $this->getInfoData('cc_type') ?>
-        <?php $parcela2 = end($this->getParcelas()); ?>
-		<ul class="card-logo">
-		<?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
-			<li id="li-card-<?php echo $_typeCode ?>" class="seleciona-bandeiras-cards">
-				<label for="ropt-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" /></label>
-                <input type="radio" class="radio" id="ropt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>"/>
-			</li>
-		<?php endforeach ?>
-		</ul>
-    </li>
-</ul>
-    <ul id="payment_form_<?php echo $_code ?>">
-    <li  style="display:none">
+<?php $_ccType = $this->getInfoData('cc_type') ?>
+<?php $parcela2 = end($this->getParcelas()); ?>
+<ul id="payment_form_<?php echo $_code ?>">
+    <li  style="display: block">
         <div class="input-box">
-            <label for="<?php echo $_code ?>_cc_type" class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label><br />
-            <select id="<?php echo $_code ?>_cc_type" style="display: block;" name="payment<?php echo $fieldCode; ?>[cc_type]" class="required-entry validate-card-type-select" onChange="javascript:onCardChange(this)">
-                <option value=""><?php echo $this->__('--Please Select--') ?></option>
-            <?php $_ccType = $this->getInfoData('cc_type') ?>
-            <?php $ccTypes = $this->getCcAvailableTypes(); ?>
-            <?php foreach ($ccTypes as $_typeCode => $_typeName): ?>
-                <?php
-                    if (count($ccTypes) == 1 || $_typeCode == $_ccType) {
-                        $selected = 'selected="selected"';
-                    }
-                    else {
-                        $selected = '';
-                    }
-                ?>
-                <option id="opt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>" <?php echo $selected; ?>><?php echo $_typeName ?></option>
-            <?php endforeach ?>
-            </select>
+            <?php if(Mage::getStoreConfig('payment/evolucardgateway/ativarlabel')): ?>
+            <div style="width: 99.5%; height: 25px;">
+            <label for="card-logo" class="required"><em>*</em><?php echo $this->__('Selecione sua Bandeira') ?></label>
+            </div>
+            <?php endif; ?>
+            <ul class="card-logo">
+    		<?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+    			<li id="li-card-<?php echo $_typeCode ?>" class="seleciona-bandeiras-cards">
+    				<label for="opt-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" /></label>
+                    
+                    <input type="radio" class="radio" name="payment<?php echo $fieldCode; ?>[cc_type]" id="opt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>" onclick="onCardChange(this);"/>
+    			</li>
+    		<?php endforeach; ?>
+    		</ul>
         </div>
     </li>
     <li>
@@ -247,8 +225,6 @@ function numeros(v){
 </fieldset>
 <script type="text/javascript">
 
-//document.observe("dom:loaded", bodyOnload);
-
 function ChkBoxMethod(){
     if(!$('evolucardgateway_create_account').checked) { // Desmarcar
          $('form-evolucard-celular').hide();
@@ -259,32 +235,6 @@ function ChkBoxMethod(){
         $('form-evolucard-telefone').show();
     }
 }
-
-$$('.seleciona-bandeiras-cards input.radio').invoke('observe', 'click', function(){
-    var meuID = this.id;
-    
-    $$('.seleciona-bandeiras-cards input.radio').each(function(e) {
-        var idLi = e.id;
-        
-        if(meuID != idLi) {
-            $(''+ idLi +'').checked = false;
-        }
-        else {
-            $(''+ idLi +'').checked = true;
-        }
-    });
-    
-    IDselect = meuID.substr(1,30);
-    $(''+IDselect+'').selected = true;
-    
-    onCardChange($('evolucardgateway_cc_type'));
-});
-
-$('opt-visa').disabled=false;
-$('opt-master').disabled=false;
-$('opt-diners').disabled=false;
-$('opt-elo').disabled=false;
-$('opt-amex').disabled=false;
 
 </script>
 

@@ -145,6 +145,8 @@
                 <allowspecific>0</allowspecific>
                 <useccv>1</useccv>
                 <captura>1</captura>
+                <ativarlabel>1</ativarlabel>
+                <enablevalidate>1</enablevalidate>
             </evolucardgateway>
         </payment>
     </default>

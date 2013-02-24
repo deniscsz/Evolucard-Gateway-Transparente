@@ -131,10 +131,11 @@
     vertical-align:bottom;
     display:block;
     position:relative;
+    width: 60px;
 }
 
-.card-logo li input {
-    
+.card-logo li label {
+    padding-left: 5px;
 }
 
 .card-logo li .validation-advice {
