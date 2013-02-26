@@ -164,7 +164,7 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         
         //echo $order->getCustomerDob();
         $dateTimestamp = Mage::getModel('core/date')->timestamp(strtotime($order->getCustomerDob())) + 15000;
-        $fields['consumer.birthDate'] = $dataForFilter = date('Y-m-d', $dateTimestamp);
+        $fields['consumer.birthDate'] = date('Y-m-d', $dateTimestamp);
         
         switch($payment->getData('cc_type')) {
             case 'visa': $fields['consumer.cardPaymentBrand'] = 1; break;
