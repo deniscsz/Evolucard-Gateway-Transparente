@@ -74,7 +74,7 @@ function numeros(v){
     			<li id="li-card-<?php echo $_typeCode ?>" class="seleciona-bandeiras-cards">
     				<label for="opt-<?php echo $_typeCode ?>"><img src="<?php echo $this->getSkinUrl('images/evolucardgateway/'.$_typeCode.'/'. $parcela2['parcela'] .'x.gif') ?>" /></label>
                     
-                    <input type="radio" class="radio" name="payment<?php echo $fieldCode; ?>[cc_type]" id="opt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>" onclick="onCardChange(this);"/>
+                    <input type="radio" class="radio" name="payment[cc_type]" id="opt-<?php echo $_typeCode ?>" value="<?php echo $_typeCode ?>" onclick="onCardChange(this);"/>
     			</li>
     		<?php endforeach; ?>
     		</ul>
