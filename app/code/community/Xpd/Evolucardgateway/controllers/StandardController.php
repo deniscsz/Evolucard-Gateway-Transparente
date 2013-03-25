@@ -302,7 +302,7 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
             $status = $this->getRequest()->getParam('status');
             
             echo $orderFilter = Mage::getModel('sales/order_payment')->getCollection()
-                ->addAttributeToSelect('parent_id')
+                ->addAttributeToSelect('*')
                 ->addAttributeToFilter('evolucard_transaction_id', array('eq' => $evoId))
                 ->getLastItem();
             $orderId = $orderFilter->getParentId();
