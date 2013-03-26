@@ -6,5 +6,9 @@
 "Expiration Date","Data de Validade"
 "Card Verification Number","Número de Segurança"
 "What is this?","O que é isso?"
+"Name on the Card: %s","Nome no Cartão: %s"
+"Credit Card Type: %s","Bandeira da Cartão"
+"Credit Card Number: xxxx-%s","Número do Cartão: xxxx-%s"
+"Expiration Date: %s/%s","Data de Validade: %s/%s"
 "--Please Select--","--Favor Selecionar--"
 
