@@ -297,7 +297,7 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
     }
 
     public function capturaAction() {
-        if($this->getRequest()->isPost() && $this->getRequest()->getParam('id') && $this->getRequest()->getParam('status') && Mage::getStoreConfig('payment/evolucardgateway/captura')) {
+        if($this->getRequest()->isPost() && $this->getRequest()->getParam('transactionNumberEvc') && $this->getRequest()->getParam('status') && Mage::getStoreConfig('payment/evolucardgateway/captura')) {
             $evoId = $this->getRequest()->getParam('transactionNumberEvc');
             $status = $this->getRequest()->getParam('status');
             
@@ -306,6 +306,7 @@ class Xpd_Evolucardgateway_StandardController extends Mage_Core_Controller_Front
                 ->addAttributeToFilter('evolucard_transaction_id', array('eq' => $evoId))
                 ->getLastItem();
             $orderId = $orderFilter->getParentId();
+    		
             $order = Mage::getModel('sales/order')->load($orderId);
             
             if($order->getIncrementId()) {
