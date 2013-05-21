@@ -180,8 +180,12 @@ class Xpd_Evolucardgateway_Model_Standard extends Mage_Payment_Model_Method_Abst
         $additionaldata = unserialize($payment->getData('additional_data'));
         $fields['consumer.cardSecurityCode'] = $payment->decrypt($additionaldata['cc_cid_enc']);
         $fields['value'] = number_format($order->getGrandTotal(), 2, '.', '');
-        $fields['numberPayment'] = $this->formaPagamentoParcelas;
-        $fields['installmentResponsible'] = $this->formaPagamentoProduto;
+        $fields['numberPayment'] = Mage::getSingleton('core/session')->getNumparevo();
+    	
+		if(Mage::getStoreConfig('payment/evolucardgateway/evocode') == "2")
+			$fields['installmentResponsible'] = 'M';
+		else
+			$fields['installmentResponsible'] = 'A';
         
         $fields['consumer.phoneAc'] = Mage::getSingleton('core/session')->getDddTel();
         $fields['consumer.phoneNb'] = Mage::getSingleton('core/session')->getNumberTel();
