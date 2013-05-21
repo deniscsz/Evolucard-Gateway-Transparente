@@ -88,6 +88,8 @@ class Octagono_Cielo_Block_Parcelas extends Mage_Core_Block_Template
 		        }elseif($n < 1){
 			        $n = 1;
 		        }
+		        
+		        Mage::getSingleton('core/session')->setNumparevo($n);
 
 		        $parcelas = array();
 	            for ($i=0; $i < $n; $i++){
