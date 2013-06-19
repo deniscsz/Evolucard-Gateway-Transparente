@@ -68,7 +68,7 @@ class Xpd_Evolucardgateway_Block_Form_Cc extends Mage_Payment_Block_Form_Cc {
     public function getParcelas() {
         $max_parcelas = Mage::getStoreConfig('payment/evolucardgateway/parcelas');
         $valor_minimo = Mage::getStoreConfig('payment/evolucardgateway/valor_minimo');
-        $parcelas_sem_juros = Mage::getStoreConfig('payment/evolucardgateway/standard/parcelas_sem_juros');
+        $parcelas_sem_juros = Mage::getStoreConfig('payment/evolucardgateway/parcelas_sem_juros');
         $taxa_juros = Mage::getStoreConfig('payment/evolucardgateway/taxa_juros');
 
         $total = Mage::getSingleton('checkout/cart')->getQuote()->getGrandTotal();
